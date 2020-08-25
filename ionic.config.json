@@ -1,0 +1,7 @@
+{
+  "name": "monument-tinder",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
