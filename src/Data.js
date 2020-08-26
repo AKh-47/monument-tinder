@@ -43,11 +43,11 @@ export default [
     image: parth,
   },
   {
-    name: "Chichen Itza",
-    image: itza,
-  },
-  {
     name: "Great Wall of China",
     image: wall,
+  },
+  {
+    name: "Chichen Itza",
+    image: itza,
   },
 ];
