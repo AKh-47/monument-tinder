@@ -1,0 +1,15 @@
+.start {
+  color: #fefefe;
+
+  &__instructions-title {
+    font-size: 2rem;
+    margin-bottom: 10rem;
+  }
+
+  &__instructions-list {
+    margin-bottom: 10rem;
+    line-height: 3rem;
+    font-size: 1.25rem;
+    list-style: none;
+  }
+}

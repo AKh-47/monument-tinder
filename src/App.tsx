@@ -3,16 +3,10 @@ import {
   IonApp,
   IonHeader,
   IonContent,
-  IonCard,
   createGesture,
-  Gesture,
-  IonCardContent,
-  IonCardTitle,
-  IonButton,
   IonGrid,
   IonRow,
   IonToast,
-  IonBackdrop,
 } from "@ionic/react";
 
 /* Core CSS required for Ionic components to work properly */
@@ -33,21 +27,32 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-
 import "./styles/main.scss";
+
 import Card from "./components/Card";
+import EndScreen from "./components/EndScreen";
+
 import monuments from "./Data";
+import StartScreen from "./components/StartScreen";
 
 const App: React.FC = () => {
   const cardRef = useRef<HTMLIonCardElement>();
-  // const [delta, setdelta] = useState<number>(0);
   const [delta, setdelta] = useState<Array<number>>(Array(10).fill(0));
-
   const [rightSwipeCount, setRightSwipeCount] = useState<number>(0);
-  const [totalSwipeCount, setTotalSwipeCount] = useState<number>(0);
-  const [currentIndex, setcurrentIndex] = useState<number>(9);
+  const [currentIndex, setcurrentIndex] = useState<number>(
+    monuments.length - 1
+  );
   const [showSuccessToast, setShowSuccessToast] = useState<boolean>(false);
   const [showFailureToast, setShowFailureToast] = useState<boolean>(false);
+  const [start, setStart] = useState<boolean>(false);
+
+  const resetState = () => {
+    setdelta(Array(10).fill(0));
+    setRightSwipeCount(0);
+    setcurrentIndex(monuments.length - 1);
+    setShowSuccessToast(false);
+    setShowFailureToast(false);
+  };
 
   const swipe = (element) =>
     createGesture({
@@ -70,26 +75,26 @@ const App: React.FC = () => {
           newArr[currentIndex] = 600;
           setdelta(newArr);
           setRightSwipeCount((old) => old + 1);
-          setcurrentIndex((old) => old - 1);
           setShowSuccessToast(true);
-          setTotalSwipeCount((old) => old + 1);
+          setcurrentIndex((old) => old - 1);
         }
         if (event.deltaX < -150) {
           let newArr = Array(10).fill(0);
           newArr[currentIndex] = -600;
           setdelta(newArr);
-          setcurrentIndex((old) => old - 1);
           setShowFailureToast(true);
-          setTotalSwipeCount((old) => old + 1);
+          setcurrentIndex((old) => old - 1);
         }
       },
     });
 
   useEffect(() => {
-    swipe(cardRef.current).enable();
+    if (currentIndex >= 0 && start) {
+      swipe(cardRef.current).enable();
+    }
   });
 
-  const cardArray = monuments.map((mon, index, arr) => {
+  const cardArray = monuments.map((monumnet, index, arr) => {
     let offset = delta[currentIndex];
 
     const styles = {
@@ -102,12 +107,15 @@ const App: React.FC = () => {
       <Card
         styleObj={styles}
         refer={cardRef}
-        image={mon.image}
-        name={mon.name}
-        key={mon.name}
+        image={monumnet.image}
+        name={monumnet.name}
+        desc={monumnet.desc}
+        key={monumnet.name}
       />
     );
   });
+
+  // return <StartScreen setStart={setStart} />;
 
   return (
     <IonApp>
@@ -115,11 +123,28 @@ const App: React.FC = () => {
       <IonHeader class="header">Monument Tinder</IonHeader>
       {/* <IonHeader>Monument Tinder</IonHeader> */}
       <IonContent className="ion-text-center body">
-        <IonGrid className="align-items-center justify-content-center">
-          <IonRow className="align-items-center">
-            {cardArray[currentIndex]}
+        <IonGrid
+          style={{ height: "100%" }}
+          className="ion-align-items-center ion-justify-content-center"
+        >
+          <IonRow
+            style={{ height: "100%" }}
+            className="ion-justify-content-center ion-align-items-center"
+          >
+            {start ? null : <StartScreen setStart={setStart} />}
+            {start ? (
+              currentIndex >= 0 ? (
+                cardArray[currentIndex]
+              ) : (
+                <EndScreen
+                  rightSwipeCount={rightSwipeCount}
+                  resetState={resetState}
+                />
+              )
+            ) : null}
           </IonRow>
         </IonGrid>
+
         <IonToast
           mode="ios"
           isOpen={showSuccessToast}
@@ -139,27 +164,10 @@ const App: React.FC = () => {
         />
 
         {/* <IonBackdrop /> */}
+        {/* <IonButton onClick={resetState}>Reset</IonButton> */}
       </IonContent>
     </IonApp>
   );
 };
 
 export default App;
-
-{
-  /* <IonCard
-          style={{
-            transform: `translate(${delta}px) rotate(${delta / 10}deg`,
-            transition: ".2s all ease",
-            position: "absolute",
-            opacity: 0.6,
-          }}
-          id="card"
-          ref={cardRef}
-          class="ion-margin"
-        >
-          <IonCardContent style={{ padding: "5px 5px 0px 5px" }}>
-            <img style={{}} src={test} alt="IMG" />
-          </IonCardContent>
-        </IonCard> */
-}
