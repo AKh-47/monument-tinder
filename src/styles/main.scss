@@ -1,0 +1,9 @@
+@import "./header";
+
+body {
+  background-color: #472e3e;
+}
+
+.body {
+  --background: linear-gradient(to bottom right, #a6686c, #472e3e) !important;
+}
