@@ -40,8 +40,8 @@ import monuments from "./Data";
 
 const App: React.FC = () => {
   const cardRef = useRef<HTMLIonCardElement>();
-  const [delta, setdelta] = useState<number>(0);
-  // const [delta, setdelta] = useState<Array<number>>(Array(10).fill(0));
+  // const [delta, setdelta] = useState<number>(0);
+  const [delta, setdelta] = useState<Array<number>>(Array(10).fill(0));
 
   const [rightSwipeCount, setRightSwipeCount] = useState<number>(0);
   const [totalSwipeCount, setTotalSwipeCount] = useState<number>(0);
@@ -55,21 +55,29 @@ const App: React.FC = () => {
       threshold: 15,
       gestureName: "swipe",
       onMove: (event) => {
-        setdelta(event.deltaX);
+        let newArr = Array(10).fill(0);
+        newArr[currentIndex] = event.deltaX;
+        setdelta(newArr);
       },
       onEnd: (event) => {
         if (event.deltaX < 150) {
-          setdelta(0);
+          let newArr = Array(10).fill(0);
+          newArr[currentIndex] = 0;
+          setdelta(newArr);
         }
         if (event.deltaX > 150) {
-          setdelta(600);
+          let newArr = Array(10).fill(0);
+          newArr[currentIndex] = 600;
+          setdelta(newArr);
           setRightSwipeCount((old) => old + 1);
           setcurrentIndex((old) => old - 1);
           setShowSuccessToast(true);
           setTotalSwipeCount((old) => old + 1);
         }
         if (event.deltaX < -150) {
-          setdelta(-600);
+          let newArr = Array(10).fill(0);
+          newArr[currentIndex] = -600;
+          setdelta(newArr);
           setcurrentIndex((old) => old - 1);
           setShowFailureToast(true);
           setTotalSwipeCount((old) => old + 1);
@@ -82,35 +90,13 @@ const App: React.FC = () => {
   });
 
   const cardArray = monuments.map((mon, index, arr) => {
-    // let ref;
-    let offset = 0;
-    if (index === currentIndex) {
-      // ref = cardRef;
-      offset = delta;
-    }
+    let offset = delta[currentIndex];
 
-    let styles;
-
-    styles = {
+    const styles = {
       transform: `translate(${offset}px) rotate(${offset / 10}deg`,
       transition: ".2s all ease",
       margin: "2rem auto",
     };
-
-    // if (9 - totalSwipeCount >= currentIndex) {
-    //   styles = {
-    //     transform: `translate(${offset}px) rotate(${offset / 10}deg`,
-    //     transition: ".2s all ease",
-    //     margin: "2rem auto",
-    //     display: "none",
-    //   };
-    // } else {
-    //   styles = {
-    //     transform: `translate(${offset}px) rotate(${offset / 10}deg`,
-    //     transition: ".2s all ease",
-    //     margin: "2rem auto",
-    //   };
-    // }
 
     return (
       <Card
@@ -131,52 +117,9 @@ const App: React.FC = () => {
       <IonContent className="ion-text-center body">
         <IonGrid className="align-items-center justify-content-center">
           <IonRow className="align-items-center">
-            {/* {monuments.map((mon, index, arr) => {
-              let ref;
-              let offset = 0;
-              if (index === currentIndex) {
-                ref = cardRef;
-                offset = delta;
-              }
-
-              let styles;
-
-              // styles = {
-              //   transform: `translate(${offset}px) rotate(${offset / 10}deg`,
-              //   transition: ".2s all ease",
-              //   margin: "2rem auto",
-              //   display: "none",
-              // };
-
-              if (9 - totalSwipeCount >= currentIndex) {
-                styles = {
-                  transform: `translate(${offset}px) rotate(${offset / 10}deg`,
-                  transition: ".2s all ease",
-                  margin: "2rem auto",
-                  display: "none",
-                };
-              } else {
-                styles = {
-                  transform: `translate(${offset}px) rotate(${offset / 10}deg`,
-                  transition: ".2s all ease",
-                  margin: "2rem auto",
-                };
-              }
-
-              return (
-                <Card
-                  styleObj={styles}
-                  refer={ref}
-                  image={mon.image}
-                  name={mon.name}
-                  key={mon.name}
-                />
-              );
-            })} */}
             {cardArray[currentIndex]}
           </IonRow>
         </IonGrid>
-
         <IonToast
           mode="ios"
           isOpen={showSuccessToast}
